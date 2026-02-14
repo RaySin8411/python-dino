@@ -259,3 +259,31 @@ def main():
         clock.tick(30)
         pygame.display.update()
 
+def menu(death_count):
+    global points
+    run = True
+    while run:
+        screen.fill((255, 255, 255))
+        font = pygame.font.Font(os.path.join("assets/font", "ARCADECLASSIC.TTF"), 30)
+
+        if death_count == 0:
+            text = font.render("Press any key to start", True, (94, 94, 94))
+        elif death_count > 0:
+            text = font.render("Press any key to restart", True, (94, 94, 94))
+            score = font.render("Your Score  " + str(points), True, (94, 94, 94))
+            scoreRect = score.get_rect()
+            scoreRect.center = (screen_width // 2, screen_height // 2 + 50)
+            screen.blit(score, scoreRect)
+
+        textRect = text.get_rect()
+        textRect.center = (screen_width // 2, screen_height // 2)
+        screen.blit(text, textRect)
+        screen.blit(RUNNING[0], (screen_width // 2 - 20, screen_height // 2 - 140))   
+        pygame.display.update()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+            if event.type == pygame.KEYDOWN:
+                main()
+
+menu(death_count=0)
