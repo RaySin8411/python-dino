@@ -94,3 +94,20 @@ class Dinosaur:
     def draw(self, SCREEN):
         SCREEN.blit(self.image, (self.dino_rect.x, self.dino_rect.y))
 
+CLOUD = pygame.image.load(os.path.join("assets/Other", "Chrome Dinosaur Cloud.png"))
+
+class Cloud:
+    def __init__(self):
+        self.x = screen_width + random.randint(500, 2000)
+        self.y = random.randint(50, 200)
+        self.image = CLOUD
+        self.width = self.image.get_width()
+    
+    def update(self):
+        self.x -= game_speed
+        if self.x < -self.width:
+            self.x = screen_width + random.randint(500, 1500)
+            self.y = random.randint(50, 200)
+
+    def draw(self, SCREEN):
+        SCREEN.blit(self.image, (self.x, self.y))
