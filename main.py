@@ -184,3 +184,78 @@ class Bird(Obstacle):
         SCREEN.blit(self.image[self.index//5], self.rect)
         self.index += 1
 
+def main():
+    global game_speed, x_pos_bg, y_pos_bg, obstacles, points
+    run = True
+    clock = pygame.time.Clock()
+    cloud = Cloud()
+    player = Dinosaur()
+    game_speed = 14
+    x_pos_bg = 0
+    y_pos_bg = 380
+    obstacles = []
+    death_count = 0
+    points = 0
+    font = pygame.font.Font(os.path.join("assets/font", "ARCADECLASSIC.TTF"), 30)
+
+
+    def background():
+        global x_pos_bg, y_pos_bg
+        image_width = BG.get_width()
+        bg_rect = BG.get_rect()
+        screen.blit(BG, (x_pos_bg, y_pos_bg))
+        screen.blit(BG, (image_width + x_pos_bg, y_pos_bg))
+        if x_pos_bg <= -image_width:
+            screen.blit(BG, (image_width + x_pos_bg, y_pos_bg))
+            x_pos_bg = 0
+        x_pos_bg -= game_speed
+        bg_rect.x = x_pos_bg
+    
+    def score():
+        global points, game_speed
+        points += 1
+        if points % 100 == 0:
+            game_speed += 1
+
+        text = font.render(str(points), True, (94, 94, 94))
+        textRect = text.get_rect()
+        textRect.center = (1000, 60)
+        screen.blit(text, textRect)
+
+    while run:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+
+        screen.fill((255, 255, 255))
+        userInput = pygame.key.get_pressed()
+
+        cloud.draw(screen)
+        cloud.update()
+
+        background()
+
+        score()
+
+        if len(obstacles) == 0:
+            if random.randint(0, 2) == 0:
+                obstacles.append(SmallCactus(SMALL_CACTUS))
+            elif random.randint(0, 2) == 1:
+                obstacles.append(LargeCactus(LARGE_CACTUS))
+            elif random.randint(0, 2) == 2:
+                obstacles.append(Bird(BIRD))
+
+        for obstacle in obstacles:
+            obstacle.draw(screen)
+            obstacle.update()
+            if player.dino_rect.colliderect(obstacle.rect):
+                pygame.time.delay(2000)
+                death_count += 1
+                menu(death_count)
+
+        player.draw(screen)
+        player.update(userInput)        
+
+        clock.tick(30)
+        pygame.display.update()
+
